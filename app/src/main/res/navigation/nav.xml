@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    app:startDestination="@id/home_graph"
+    xmlns:app="http://schemas.android.com/apk/res-auto" android:id="@+id/nav">
+
+    <navigation android:id="@+id/home_graph" app:startDestination="@id/homeFragment">
+
+        <action android:id="@+id/home_to_book" app:popUpTo="@id/home_graph" app:popUpToInclusive="true" />
+        <fragment android:id="@+id/homeFragment" android:name="com.example.googlebooksapi.UI.home.HomeFragment"/>
+    </navigation>
+
+</navigation>
