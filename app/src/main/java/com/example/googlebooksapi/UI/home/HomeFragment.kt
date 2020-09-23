@@ -4,7 +4,6 @@ import android.os.Bundle
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import android.view.View
-import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.googlebooksapi.R
 import com.example.googlebooksapi.databinding.HomeFragmentBinding
@@ -22,6 +21,7 @@ class HomeFragment : Fragment(R.layout.home_fragment) {
 
         val adapter = BooksAdapter()
 
+        val audioAdapter = AudioBooksAdapter()
         Timber.i("Here")
         val binding = HomeFragmentBinding.bind(view)
         with(binding) {
@@ -31,8 +31,14 @@ class HomeFragment : Fragment(R.layout.home_fragment) {
                 LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
             this.homeBooksRV.adapter = adapter
 
+            this.audioBooksRV.layoutManager = LinearLayoutManager(context,LinearLayoutManager.HORIZONTAL,false)
+            this.audioBooksRV.adapter = audioAdapter
+
             viewModel.bookList.observe(viewLifecycleOwner, {
                 adapter.updateList(it)
+            })
+            viewModel.audioBookList.observe(viewLifecycleOwner, {
+                audioAdapter.updateListings(it)
             })
 
         }

@@ -29,6 +29,7 @@ class HomeViewModel @ViewModelInject constructor(
         savedStateHandle.getLiveData<String>("username", "Liam")
 
     val bookList: MutableLiveData<List<ItemObj>> = savedStateHandle.getLiveData("bookList")
+    val audioBookList: MutableLiveData<List<ItemObj>> = savedStateHandle.getLiveData("audioBooks")
 
     init {
         Timber.tag("Home View Model")
@@ -36,10 +37,14 @@ class HomeViewModel @ViewModelInject constructor(
             val resp = apiService.searchBooks("Dazai", context.getString(R.string.api_key))
             Timber.i("Send Api Request")
             Timber.i(resp.message())
-            if(resp.isSuccessful){
-                Timber.i("Response Success")
+            if (resp.isSuccessful) {
                 bookList.postValue(resp.body()?.items)
                 Timber.i("Should have updated LiveData")
+            }
+            val resp2 = apiService.searchBooks("Natsume", context.getString(R.string.api_key))
+            if(resp2.isSuccessful){
+                Timber.i("Response Success")
+                audioBookList.postValue(resp2.body()?.items)
             }
         }
 

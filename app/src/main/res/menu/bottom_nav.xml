@@ -4,17 +4,21 @@
     <item
         android:id="@+id/homeopt"
         android:enabled="true"
+        android:icon="@drawable/ic_home"
         android:title="@string/Home" />
     <item
         android:id="@+id/favoriteOpt"
         android:enabled="true"
+        android:icon="@drawable/ic_bookmark"
         android:title="@string/favourites" />
     <item
         android:id="@+id/storeopt"
         android:enabled="true"
+        android:icon="@drawable/ic_shopping_cart"
         android:title="@string/store" />
     <item
         android:id="@+id/settingsopt"
         android:enabled="true"
+        android:icon="@drawable/ic_gear"
         android:title="@string/settings" />
 </menu>
