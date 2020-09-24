@@ -2,6 +2,7 @@ package com.example.googlebooksapi.UI.home
 
 
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.googlebooksapi.aou.ItemObj
@@ -29,10 +30,9 @@ class BooksAdapter @Inject constructor() :
                 this.bookItemTitle.text = item.volumeInfo.title
                 if(item.volumeInfo.imageLinks !== null){
 
+                    this.placeHolderImg.visibility = View.INVISIBLE
                     this.bookImage.load(item.volumeInfo.imageLinks.thumbnail)
                 }
-                //this.bookImage.load(item.volumeInfo.imageLinks.thumbnail)
-
             }
         }
     }

@@ -25,6 +25,15 @@
             android:layout_height="200dp"
             android:contentDescription="@string/bookName"
             tools:srcCompat="@tools:sample/avatars" />
+
+        <ImageView
+            android:id="@+id/placeHolderImg"
+            android:layout_width="wrap_content"
+            android:layout_height="200dp"
+            android:contentDescription="blank"
+            android:visibility="visible"
+            app:srcCompat="@mipmap/ic_launcher"
+            tools:srcCompat="@tools:sample/avatars" />
     </androidx.cardview.widget.CardView>
 
     <TextView

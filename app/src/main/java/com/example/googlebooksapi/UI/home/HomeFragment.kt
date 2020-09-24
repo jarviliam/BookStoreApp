@@ -5,6 +5,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import android.view.View
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.googlebooksapi.MainActivity
 import com.example.googlebooksapi.R
 import com.example.googlebooksapi.databinding.HomeFragmentBinding
 import dagger.hilt.android.AndroidEntryPoint
@@ -33,6 +34,11 @@ class HomeFragment : Fragment(R.layout.home_fragment) {
 
             this.audioBooksRV.layoutManager = LinearLayoutManager(context,LinearLayoutManager.HORIZONTAL,false)
             this.audioBooksRV.adapter = audioAdapter
+            this.helloText.setOnClickListener {
+                val x = requireActivity() as MainActivity
+                x.hideNavigation()
+
+            }
 
             viewModel.bookList.observe(viewLifecycleOwner, {
                 adapter.updateList(it)
