@@ -28,6 +28,8 @@ class HomeViewModel @ViewModelInject constructor(
     val userName: LiveData<String> =
         savedStateHandle.getLiveData<String>("username", "Liam")
 
+    val bookSearchType: MutableLiveData<String> =
+        savedStateHandle.getLiveData("bookType", "Popular")
     val bookList: MutableLiveData<List<ItemObj>> = savedStateHandle.getLiveData("bookList")
     val audioBookList: MutableLiveData<List<ItemObj>> = savedStateHandle.getLiveData("audioBooks")
 
@@ -42,12 +44,27 @@ class HomeViewModel @ViewModelInject constructor(
                 Timber.i("Should have updated LiveData")
             }
             val resp2 = apiService.searchBooks("Natsume", context.getString(R.string.api_key))
-            if(resp2.isSuccessful){
+            if (resp2.isSuccessful) {
                 Timber.i("Response Success")
                 audioBookList.postValue(resp2.body()?.items)
             }
         }
 
+    }
+
+    fun bookTypeChanged(type: String) {
+        when (type) {
+            "Popular" -> scope.launch { fetchItemsFromRemote("Dazai") }
+            "Bestsellers" -> scope.launch { fetchItemsFromRemote("Mahjong") }
+            "Newest" -> scope.launch { fetchItemsFromRemote("Near to the") }
+        }
+    }
+
+    private suspend fun fetchItemsFromRemote(name: String) {
+        val response = apiService.searchBooks(name, context.getString(R.string.api_key))
+        if (response.isSuccessful) {
+            bookList.postValue(response.body()?.items)
+        }
     }
 
 

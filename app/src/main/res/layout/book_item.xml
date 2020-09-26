@@ -3,8 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/bookItem"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content">
+    android:layout_width="@dimen/homeRVItemWidth"
+    android:layout_height="@dimen/homeRVItemHeight">
 
     <androidx.cardview.widget.CardView
         android:id="@+id/bookItemCard"
@@ -13,7 +13,7 @@
         android:layout_marginStart="8dp"
         android:layout_marginTop="16dp"
         android:layout_marginEnd="8dp"
-        app:cardCornerRadius="10dp"
+        app:cardCornerRadius="5dp"
         app:cardElevation="10dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -21,18 +21,18 @@
 
         <ImageView
             android:id="@+id/bookImage"
-            android:layout_width="wrap_content"
-            android:layout_height="200dp"
+            android:layout_width="@dimen/homeRVItemPicWidth"
+            android:layout_height="@dimen/homeRVItemPicHeight"
             android:contentDescription="@string/bookName"
             tools:srcCompat="@tools:sample/avatars" />
 
         <ImageView
             android:id="@+id/placeHolderImg"
-            android:layout_width="wrap_content"
-            android:layout_height="200dp"
+            android:layout_width="@dimen/homeRVItemPicWidth"
+            android:layout_height="@dimen/homeRVItemPicHeight"
             android:contentDescription="blank"
             android:visibility="visible"
-            app:srcCompat="@mipmap/ic_launcher"
+            app:srcCompat="@drawable/ic_outline"
             tools:srcCompat="@tools:sample/avatars" />
     </androidx.cardview.widget.CardView>
 
@@ -40,10 +40,12 @@
         android:id="@+id/bookItemTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="24dp"
+        android:layout_marginStart="8dp"
         android:layout_marginTop="17dp"
+        android:ellipsize="end"
         android:fontFamily="@font/francois_one"
         android:marqueeRepeatLimit="marquee_forever"
+        android:maxLines="2"
         android:text="@string/bookTitle"
         android:textSize="24sp"
         app:layout_constraintStart_toStartOf="parent"
@@ -53,7 +55,7 @@
         android:id="@+id/bookItemAuthor"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="24dp"
+        android:layout_marginStart="8dp"
         android:layout_marginTop="12dp"
         android:fontFamily="@font/montserrat"
         android:text="@string/author_name"

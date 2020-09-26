@@ -1,4 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <dimen name="navHeight">90dp</dimen>
+
+    <dimen name="homeRVItemPicHeight">300dp</dimen>
+    <dimen name="homeRVItemPicWidth">170dp</dimen>
+
+    <dimen name="homeRVItemWidth">200dp</dimen>
+    <dimen name="homeRVItemHeight">450dp</dimen>
+
+    <dimen name="audioBookHeight">250dp</dimen>
+    <dimen name="audioBookWidth">90dp</dimen>
+    <dimen name="audioBookItemWidth">100dp</dimen>
+
 </resources>

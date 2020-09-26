@@ -26,9 +26,10 @@ class BooksAdapter @Inject constructor() :
         fun bind(item: ItemObj) {
             with(bookBinding) {
                 Timber.i("Loading Binding")
-                this.bookItemAuthor.text = item.volumeInfo.authors.toString()
+                this.bookItemAuthor.text = item.volumeInfo.authors[0]
                 this.bookItemTitle.text = item.volumeInfo.title
                 if(item.volumeInfo.imageLinks !== null){
+                    Timber.i(item.volumeInfo.imageLinks.thumbnail)
 
                     this.placeHolderImg.visibility = View.INVISIBLE
                     this.bookImage.load(item.volumeInfo.imageLinks.thumbnail)

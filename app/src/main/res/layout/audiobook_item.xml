@@ -2,8 +2,8 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
+    android:layout_width="@dimen/audioBookItemWidth"
+    android:layout_height="@dimen/audioBookHeight"
     android:paddingLeft="10dp"
     android:paddingRight="10dp">
 
@@ -18,8 +18,9 @@
 
         <ImageView
             android:id="@+id/audioBookImage"
-            android:layout_width="wrap_content"
-            android:layout_height="150dp"
+            android:layout_width="@dimen/audioBookWidth"
+            android:layout_height="@dimen/audioBookHeight"
+            android:contentDescription="@string/audioBookCD"
             tools:srcCompat="@tools:sample/avatars" />
     </androidx.cardview.widget.CardView>
 </androidx.constraintlayout.widget.ConstraintLayout>

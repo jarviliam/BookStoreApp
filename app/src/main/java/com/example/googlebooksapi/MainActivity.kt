@@ -35,4 +35,16 @@ class MainActivity : AppCompatActivity() {
             .translationY(resources.getDimensionPixelSize(R.dimen.navHeight).toFloat())
             .setDuration(350L).setInterpolator(DecelerateInterpolator(2F)).start()
     }
+
+    fun showNavigation(animate: Boolean = true) {
+        bottomNav.run {
+            isEnabled = true
+            isClickable = true
+        }
+        bottomNav.animate()
+            .translationY(resources.getDimensionPixelSize(R.dimen.navHeight).toFloat())
+            .setDuration(350L).setInterpolator(
+                DecelerateInterpolator(2F)
+            ).start()
+    }
 }
