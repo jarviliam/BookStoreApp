@@ -3,7 +3,10 @@
     <color name="colorPrimary">#6200EE</color>
     <color name="colorPrimaryDark">#3700B3</color>
     <color name="black">#000000</color>
-    <color name="colorAccent">#03DAC5</color>:w
+    <color name="colorAccent">#03DAC5</color>
 
     <color name="colorDark">#373737</color>
+    <color name="bgYellow">#fef6df</color>
+    <color name="yellowText">#fed967</color>
+    <color name="darkerYellow">#ffbf00</color>
 </resources>

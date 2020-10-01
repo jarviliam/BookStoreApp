@@ -1,12 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
-    app:startDestination="@id/home_graph"
-    xmlns:app="http://schemas.android.com/apk/res-auto" android:id="@+id/nav">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/nav"
+    app:startDestination="@id/home_graph">
 
-    <navigation android:id="@+id/home_graph" app:startDestination="@id/homeFragment">
+    <navigation
+        android:id="@+id/home_graph"
+        app:startDestination="@id/homeFragment">
 
-        <action android:id="@+id/home_to_book" app:popUpTo="@id/home_graph" app:popUpToInclusive="true" />
-        <fragment android:id="@+id/homeFragment" android:name="com.example.googlebooksapi.UI.home.HomeFragment"/>
+        <action
+            android:id="@+id/home_to_book"
+            app:destination="@id/book_details_graph"
+            app:popUpToInclusive="true"
+            app:popUpTo="@id/book_details_graph" />
+        <fragment
+            android:id="@+id/homeFragment"
+            android:name="com.example.googlebooksapi.UI.home.HomeFragment" />
+    </navigation>
+
+    <navigation
+        android:id="@+id/book_details_graph"
+        app:startDestination="@id/bookDetailsFragment">
+
+        <fragment
+            android:id="@+id/bookDetailsFragment"
+            android:name="com.example.googlebooksapi.UI.audiobookDetail.AudioBookDetailFragment" />
     </navigation>
 
 </navigation>

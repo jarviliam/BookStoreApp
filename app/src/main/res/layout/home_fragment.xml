@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
     <androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/homeFrag"
+        android:id="@+id/homeFrag"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:textAlignment="inherit"
@@ -26,7 +26,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <ImageView
-        android:id="@+id/imageView"
+        android:id="@+id/searchButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
@@ -76,7 +76,8 @@
                 android:rotation="180"
                 android:text="@string/popular"
                 android:textAlignment="viewEnd"
-                android:textColor="#000000" />
+                android:textColor="#000000"
+                android:textStyle="normal" />
 
             <TextView
                 android:id="@+id/bestSellerTV"
@@ -90,7 +91,8 @@
                 android:rotation="270"
                 android:text="@string/bestseller"
                 android:textAlignment="center"
-                android:textColor="#595656" />
+                android:textColor="#595656"
+                android:textStyle="normal" />
 
             <TextView
                 android:id="@+id/newestTV"
@@ -99,13 +101,13 @@
                 android:height="100dp"
                 android:ellipsize="end"
                 android:fontFamily="@font/montserrat"
-                android:gravity="center|right"
+                android:gravity="center|end"
                 android:maxLines="1"
                 android:rotation="-90"
                 android:text="@string/newest"
                 android:textAlignment="center"
                 android:textColor="#000000"
-                android:textStyle="bold"
+                android:textStyle="normal"
                 app:autoSizeTextType="none" />
 
         </LinearLayout>
