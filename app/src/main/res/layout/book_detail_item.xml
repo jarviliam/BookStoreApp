@@ -10,7 +10,7 @@
     android:paddingEnd="5dp"
     android:paddingBottom="5dp">
 
-    <androidx.cardview.widget.CardView
+    <com.google.android.material.card.MaterialCardView
         android:id="@+id/bookDetailCard"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -18,7 +18,9 @@
         app:cardCornerRadius="10dp"
         app:cardElevation="4dp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toTopOf="parent"
+        app:strokeColor="#DAD6D6"
+        app:strokeWidth="1dp">
 
         <ImageView
             android:id="@+id/imageView3"
@@ -26,5 +28,5 @@
             android:layout_height="match_parent"
             android:scaleType="fitXY"
             tools:srcCompat="@tools:sample/avatars" />
-    </androidx.cardview.widget.CardView>
+    </com.google.android.material.card.MaterialCardView>
 </androidx.constraintlayout.widget.ConstraintLayout>

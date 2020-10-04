@@ -13,6 +13,7 @@ data class ItemObj(
 data class Vinfo(
     val title: String,
     val authors: List<String>,
+    val description: String,
     val publishedDate: String,
     val industryIdentifiers: List<Identify>,
     val readingModes: ReadingModes,

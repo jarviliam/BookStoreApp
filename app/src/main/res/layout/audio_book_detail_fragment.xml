@@ -151,5 +151,25 @@
             app:lineHeight="20dp"
             tools:text="This shit here be a lot of damn text scrolling nam saying my firend" />
 
+        <FrameLayout
+            android:id="@+id/buyBookBtn"
+            android:layout_width="350dp"
+            android:layout_height="70dp"
+            android:layout_marginBottom="24dp"
+            android:background="@drawable/button_rounded_black"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent">
+
+            <TextView
+                android:id="@+id/buyBookTV"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:fontFamily="@font/montserrat"
+                android:textColor="#FBFBFB"
+                tools:text="Buy this book for $19.99" />
+        </FrameLayout>
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>
