@@ -1,7 +1,9 @@
 package com.example.googlebooksapi
 
 import android.content.Context
+import android.graphics.Point
 import android.view.View
+import androidx.core.view.marginStart
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import timber.log.Timber
@@ -11,6 +13,7 @@ import kotlin.math.abs
 class CustomLayout constructor(val context: Context): LinearLayoutManager(context, HORIZONTAL, false) {
 
     private var currentPos : Int = 0
+    private var center : Point = Point(width,height)
     override fun generateDefaultLayoutParams(): RecyclerView.LayoutParams =
         RecyclerView.LayoutParams(
             RecyclerView.LayoutParams.MATCH_PARENT,
@@ -25,31 +28,37 @@ class CustomLayout constructor(val context: Context): LinearLayoutManager(contex
         }
         super.onLayoutChildren(recycler, state)
 
-        //super.onLayoutChildren(recycler, state)
+        center.x = width/2
         val center = findCurrentCenterView()
-        Timber.i("Center ${center?.id}")
         setChildOffSets()
         //detachAndScrapAttachedViews(recycler)
         //fill()
     }
+    private fun resolveOffset(xPos: Double, center: Point, peekDistance : Int): Double{
+       val adj = Math.abs(center.x - xPos)
+        return adj
+
+    }
+
+
     private fun setChildOffSets(){
         Timber.i("Child Count : $childCount")
         for (x in 0..childCount){
             val child = getChildAt(x)?: continue
             val layoutParams = child.layoutParams
-            Timber.i("Height : ${this.height}")
             if(x == 0 || x == 2){
-                Timber.i("Pos 0 : ${child.top}")
-
+                val childCenter =  (child.x + child.width ) /2.0f
+                val distanceFromCenter = abs(childCenter - center.x)
+                val yVal = child.marginStart - distanceFromCenter
                 val dimen = context.resources.getDimension(R.dimen.bookDetailOtherWidth)
-                Timber.i("Dimension : ${dimen}, Actual :${child.width}")
                 val diff = child.width - dimen / 2
-                Timber.i("Right : ${child.right}, Diff: ${diff}")
-                //child.layout((child.left+diff).toInt(), child.top, (child.right-diff).toInt(),child.bottom-5)
+                child.scaleY = 0.7f
+                child.scaleX = 0.7f
             }
             else if(x == 1){
-                val dimen = context.resources.getDimension(R.dimen.bookDetailWidth)
-                child.layout(child.left, child.top, child.right, child.bottom)
+                //val dimen = context.resources.getDimension(R.dimen.bookDetailWidth)
+                child.scaleX = 1f
+                child.scaleY = 1f
             }
             Timber.i("Child Layout params ${x}: ${layoutParams.height}")
         }
