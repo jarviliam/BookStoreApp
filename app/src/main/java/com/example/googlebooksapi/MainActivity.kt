@@ -11,21 +11,18 @@ import timber.log.Timber
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
 
+    lateinit var binding: ActivityMainBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         if (BuildConfig.DEBUG) {
             Timber.plant(Timber.DebugTree())
         }
-        val binding = ActivityMainBinding.inflate(layoutInflater)
+        binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        Timber.i("Main Act")
-        with(binding) {
-
-        }
-        //Navigation.findNavController(this,R.id.nav_host).navigate()
     }
 
+    /*
     fun hideNavigation(animate: Boolean = true) {
         bottomNav.run {
             isEnabled = false
@@ -46,5 +43,5 @@ class MainActivity : AppCompatActivity() {
             .setDuration(350L).setInterpolator(
                 DecelerateInterpolator(2F)
             ).start()
-    }
+    }*/
 }
