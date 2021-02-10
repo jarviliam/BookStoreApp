@@ -1,11 +1,10 @@
-package com.example.googlebooksapi.UI.home
+package com.example.googlebooksapi.UI.home.adapters
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.googlebooksapi.aou.ItemObj
 import com.example.googlebooksapi.databinding.AudiobookItemBinding
-import com.example.googlebooksapi.load
 import timber.log.Timber
 
 class AudioBooksAdapter constructor() : RecyclerView.Adapter<AudioBooksAdapter.ViewHolder>() {
@@ -23,7 +22,7 @@ class AudioBooksAdapter constructor() : RecyclerView.Adapter<AudioBooksAdapter.V
             Timber.i("Audio Book Binding")
             with(binding){
                 if(item.volumeInfo.imageLinks !== null) {
-                    this.audioBookImage.load(item.volumeInfo.imageLinks.thumbnail)
+                    //this.audioBookImage.load(item.volumeInfo.imageLinks.thumbnail)
                 }
 
             }
@@ -34,7 +33,7 @@ class AudioBooksAdapter constructor() : RecyclerView.Adapter<AudioBooksAdapter.V
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int
-    ): AudioBooksAdapter.ViewHolder {
+    ): ViewHolder {
         return ViewHolder(
             AudiobookItemBinding.inflate(
                 LayoutInflater.from(parent.context),
@@ -46,7 +45,7 @@ class AudioBooksAdapter constructor() : RecyclerView.Adapter<AudioBooksAdapter.V
 
     }
 
-    override fun onBindViewHolder(holder: AudioBooksAdapter.ViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         return holder.bind(list[position])
     }
 

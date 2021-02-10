@@ -1,5 +1,6 @@
 package extension
 
+import org.gradle.api.artifacts.DependenciesMetadata
 import org.gradle.api.artifacts.Dependency
 import org.gradle.api.artifacts.ProjectDependency
 import org.gradle.api.artifacts.dsl.DependencyHandler
@@ -45,6 +46,9 @@ fun DependencyHandler.addAppModuleDependencies() {
 
     // Leak
     debugImplementation(Dependencies.LEAK_CANARY)
+
+    implementation(Dependencies.GLIDE)
+    kapt(Dependencies.GLIDE_COMPILER)
 
     // Room
     implementation(Dependencies.ROOM_RUNTIME)

@@ -76,6 +76,10 @@ object Dependencies {
     const val PREFERENCE_MANAGER =
         "androidx.preference:preference-ktx:${Version.PREFERENCE_MANAGER_VERSION}"
 
+    // glide
+    const val GLIDE = "com.github.bumptech.glide:glide:${Version.GLIDE_VERSION}"
+    const val GLIDE_COMPILER = "com.github.bumptech.glide:compiler:${Version.GLIDE_VERSION}"
+
     // Leak Canary
     const val LEAK_CANARY =
         "com.squareup.leakcanary:leakcanary-android:${Version.LEAK_CANARY_VERSION}"

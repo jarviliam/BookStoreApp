@@ -31,7 +31,7 @@ class AudioBookDetailFragment : Fragment(R.layout.audio_book_detail_fragment) {
 
 
         val x = requireActivity() as MainActivity
-        x.hideNavigation()
+        //x.hideNavigation()
         Timber.i("On View Created")
 
         val binding = AudioBookDetailFragmentBinding.bind(view)

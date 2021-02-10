@@ -8,29 +8,19 @@ import androidx.lifecycle.ViewModel
 import com.example.googlebooksapi.R
 import com.example.googlebooksapi.aou.ApiService
 import com.example.googlebooksapi.aou.ItemObj
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class AudioBookDetailViewModel @ViewModelInject constructor(
-    @androidx.hilt.Assisted private val savedStateHandle: SavedStateHandle,
-    apiService: ApiService,
-    context: Context
+@HiltViewModel
+class AudioBookDetailViewModel @Inject constructor(
+    private val savedStateHandle: SavedStateHandle,
+    apiService: ApiService
 ) : ViewModel() {
 
-    private val scope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
-
     val bookList: MutableLiveData<List<ItemObj>> = savedStateHandle.getLiveData("detailedBookList")
-
-    init {
-        scope.launch {
-            val resp = apiService.searchBooks("Nietzche", context.getString(R.string.api_key))
-            if (resp.isSuccessful) {
-                bookList.postValue(resp.body()!!.items)
-            }
-        }
-    }
-
 
 }

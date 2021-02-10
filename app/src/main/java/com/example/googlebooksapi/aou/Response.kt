@@ -1,6 +1,10 @@
 package com.example.googlebooksapi.aou
 
+import android.graphics.Color
+
 data class ResponseO(val kind: String, val items: List<ItemObj>, val totalItems: Int)
+
+data class Temp(val color: Int)
 
 data class ItemObj(
     val kind: String,

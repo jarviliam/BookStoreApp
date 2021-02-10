@@ -7,7 +7,6 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.googlebooksapi.aou.ItemObj
 import com.example.googlebooksapi.databinding.BookDetailItemBinding
-import com.example.googlebooksapi.load
 import timber.log.Timber
 
 class AuthorDetailsAdapter constructor() :
@@ -26,7 +25,7 @@ class AuthorDetailsAdapter constructor() :
             with(bookBinding) {
 
                 if(itemObj.volumeInfo.imageLinks.thumbnail != null) {
-                    this.imageView3.load(itemObj.volumeInfo.imageLinks.thumbnail)
+                    //this.imageView3.load(itemObj.volumeInfo.imageLinks.thumbnail)
                 }
             }
 

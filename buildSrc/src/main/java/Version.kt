@@ -58,5 +58,8 @@ object Version {
     // Leak Canary
     const val LEAK_CANARY_VERSION = "2.6"
 
+    // Glide
+    const val GLIDE_VERSION = "4.11.0"
+
     const val CHUCKER_VERSION = "3.4.0"
 }

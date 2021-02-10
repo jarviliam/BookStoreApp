@@ -2,10 +2,8 @@ package com.example.googlebooksapi
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.view.animation.DecelerateInterpolator
 import com.example.googlebooksapi.databinding.ActivityMainBinding
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.android.synthetic.main.activity_main.*
 import timber.log.Timber
 
 @AndroidEntryPoint
