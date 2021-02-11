@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/bookItem"
     android:layout_width="@dimen/homeRVItemWidth"
-    android:layout_height="@dimen/homeRVItemHeight">
+    android:layout_height="@dimen/bookDetailHeight">
 
     <androidx.cardview.widget.CardView
         android:id="@+id/bookItemCard"

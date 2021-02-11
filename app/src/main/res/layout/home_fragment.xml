@@ -56,6 +56,7 @@
             android:layout_marginTop="32dp"
             android:layout_marginEnd="1dp"
             android:orientation="horizontal"
+            android:visibility="gone"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/textView4">
@@ -111,29 +112,32 @@
 
             </LinearLayout>
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/homeBooksRV"
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/homeRVItemHeight"
-                android:layout_marginStart="10dp"
-                android:orientation="horizontal"
-                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                tools:listitem="@layout/book_item" />
         </LinearLayout>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/homeBooksRV"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/bookDetailHeight"
+            android:layout_marginTop="32dp"
+            android:orientation="horizontal"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textView4"
+            tools:listitem="@layout/book_item" />
 
         <TextView
             android:id="@+id/audioBooks"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="32dp"
-            android:layout_marginTop="32dp"
             android:fontFamily="@font/montserrat"
             android:text="@string/audiobooks"
             android:textColor="#000000"
             android:textSize="18sp"
             android:textStyle="bold"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/linearLayout" />
+            app:layout_constraintTop_toBottomOf="@+id/homeBooksRV" />
 
         <TextView
             android:id="@+id/viewAllText"
@@ -143,7 +147,7 @@
             android:layout_marginEnd="24dp"
             android:text="@string/viewAll"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/linearLayout" />
+            app:layout_constraintTop_toBottomOf="@+id/audioBooks" />
 
         <androidx.constraintlayout.widget.Guideline
             android:id="@+id/guideline"
