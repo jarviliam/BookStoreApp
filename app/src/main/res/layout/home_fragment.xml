@@ -50,79 +50,68 @@
 
         <LinearLayout
             android:id="@+id/linearLayout"
-            android:layout_width="409dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="1dp"
-            android:layout_marginTop="32dp"
-            android:layout_marginEnd="1dp"
-            android:orientation="horizontal"
-            android:visibility="gone"
-            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_width="57dp"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            app:layout_constraintBottom_toBottomOf="@+id/homeBooksRV"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textView4">
+            app:layout_constraintTop_toTopOf="@+id/homeBooksRV">
 
-            <LinearLayout
-                android:layout_width="57dp"
-                android:layout_height="match_parent"
-                android:orientation="vertical">
+            <com.example.googlebooksapi.VerticalTextView
+                android:id="@+id/popularTV"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:height="100dp"
+                android:fontFamily="@font/montserrat"
+                android:gravity="center_vertical"
+                android:rotation="180"
+                android:text="@string/popular"
+                android:textAlignment="viewEnd"
+                android:textColor="#000000"
+                android:textStyle="normal" />
 
-                <com.example.googlebooksapi.VerticalTextView
-                    android:id="@+id/popularTV"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:height="100dp"
-                    android:fontFamily="@font/montserrat"
-                    android:gravity="center_vertical"
-                    android:rotation="180"
-                    android:text="@string/popular"
-                    android:textAlignment="viewEnd"
-                    android:textColor="#000000"
-                    android:textStyle="normal" />
+            <TextView
+                android:id="@+id/bestSellerTV"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:height="100dp"
+                android:elegantTextHeight="false"
+                android:fontFamily="@font/montserrat"
+                android:maxLines="1"
+                android:paddingTop="18dp"
+                android:rotation="270"
+                android:text="@string/bestseller"
+                android:textAlignment="center"
+                android:textColor="#595656"
+                android:textStyle="normal" />
 
-                <TextView
-                    android:id="@+id/bestSellerTV"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:height="100dp"
-                    android:elegantTextHeight="false"
-                    android:fontFamily="@font/montserrat"
-                    android:maxLines="1"
-                    android:paddingTop="18dp"
-                    android:rotation="270"
-                    android:text="@string/bestseller"
-                    android:textAlignment="center"
-                    android:textColor="#595656"
-                    android:textStyle="normal" />
-
-                <TextView
-                    android:id="@+id/newestTV"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:height="100dp"
-                    android:ellipsize="end"
-                    android:fontFamily="@font/montserrat"
-                    android:gravity="center|end"
-                    android:maxLines="1"
-                    android:rotation="-90"
-                    android:text="@string/newest"
-                    android:textAlignment="center"
-                    android:textColor="#000000"
-                    android:textStyle="normal"
-                    app:autoSizeTextType="none" />
-
-            </LinearLayout>
+            <TextView
+                android:id="@+id/newestTV"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:height="100dp"
+                android:ellipsize="end"
+                android:fontFamily="@font/montserrat"
+                android:gravity="center|end"
+                android:maxLines="1"
+                android:rotation="-90"
+                android:text="@string/newest"
+                android:textAlignment="center"
+                android:textColor="#000000"
+                android:textStyle="normal"
+                app:autoSizeTextType="none" />
 
         </LinearLayout>
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/homeBooksRV"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="@dimen/bookDetailHeight"
             android:layout_marginTop="32dp"
             android:orientation="horizontal"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/linearLayout"
             app:layout_constraintTop_toBottomOf="@+id/textView4"
             tools:listitem="@layout/book_item" />
 

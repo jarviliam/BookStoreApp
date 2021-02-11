@@ -17,9 +17,9 @@ class SingleLayoutManager : RecyclerView.LayoutManager() {
     private var _itemSizeHeight: Int? = null
     private var _currentSelected: Int? = 1
     private val helper = LayoutHelper()
+    private val postHelper = PostLayoutListener()
 
     override fun generateDefaultLayoutParams(): RecyclerView.LayoutParams {
-        Timber.i("Generating Default")
         return RecyclerView.LayoutParams(
             ViewGroup.LayoutParams.WRAP_CONTENT,
             ViewGroup.LayoutParams.WRAP_CONTENT
@@ -58,7 +58,7 @@ class SingleLayoutManager : RecyclerView.LayoutManager() {
     ) {
         val scroller = object : LinearSmoothScroller(recyclerView.context) {
             override fun calculateDxToMakeVisible(view: View, snapPreference: Int): Int {
-                return calculateOffset(view)
+                return getOffsetForView(view)
             }
 
             override fun calculateDyToMakeVisible(view: View?, snapPreference: Int): Int {
@@ -84,11 +84,9 @@ class SingleLayoutManager : RecyclerView.LayoutManager() {
     ): Int {
         if (_itemSizeWidth == null) return 0
         if (childCount == 0 || diff == 0) return 0
-        Timber.i("SCROLL BY")
         val maxOffset = getMaxScrollOffset()
         Timber.i("Max Offset ${maxOffset}")
         Timber.i("Diff${diff}")
-        //_currentSelected = _currentSelected?.plus(1)
         val scrolLAmount = if (0 > helper._scrollOffset + diff) {
             Timber.i("RESTTTO 0")
             -helper._scrollOffset
@@ -109,7 +107,6 @@ class SingleLayoutManager : RecyclerView.LayoutManager() {
     override fun onLayoutChildren(recycler: RecyclerView.Recycler, state: RecyclerView.State) {
         if (state.itemCount == 0) {
             removeAndRecycleAllViews(recycler)
-            Timber.e("No Items")
             return
         }
         detachAndScrapAttachedViews(recycler)
@@ -187,6 +184,9 @@ class SingleLayoutManager : RecyclerView.LayoutManager() {
 
     }
 
+    /**
+     * This is Where the View is actually rendered
+     */
     private fun fillView(
         order: LayoutOrder,
         recycler: RecyclerView.Recycler,
@@ -195,41 +195,93 @@ class SingleLayoutManager : RecyclerView.LayoutManager() {
         end: Int,
         bottom: Int
     ) {
+        //Get the View At Adapter Position And Add it
         val view = recycler.getViewForPosition(order.adapterPos)
         addView(view)
         measureChildWithMargins(view, 0, 0)
-        val elevation = if (order.itemPositionDiff == 0F) 10F else order.itemPositionDiff.toFloat()
+        //If It's in the center, Set Elevation.
+        val elevation = if (order.itemPositionDiff == 0F) 10F else order.itemPositionDiff
         ViewCompat.setElevation(view, elevation)
-        view.layout(start, top, end, bottom)
+        //Get Scaling Factors
+        val transformation = postHelper.scaleChild(view, order.itemPositionDiff, order.adapterPos)
+        Timber.tag("Fill View")
+        Timber.i("View ${order.adapterPos} - ${transformation.translateX} ${transformation.scaleX}")
+        //If The view is To the left of the Center. Subtract the Translation.
+        //to move it left
+        if (order.itemPositionDiff.roundToInt() < 0) {
+            view.layout(
+                (start - transformation.translateX).roundToInt(),
+                top,
+                (end - transformation.translateX).roundToInt(),
+                bottom
+            )
+        } else {
+            //Otherwise add to move it to the right (opening a gap)
+            view.layout(
+                (start + transformation.translateX).roundToInt(),
+                top,
+                (end + transformation.translateX).roundToInt(),
+                bottom
+            )
+        }
+        //Apply Scaling Factor
+        //Center = 1.0
+        view.scaleX = transformation.scaleX
+        view.scaleY = transformation.scaleY
     }
 
+    /**
+     * Produces the Layout Order of Items
+     *
+     */
     private fun makeLayoutOrder(state: RecyclerView.State) {
-        //Generate Views
         _itemCount = state.itemCount
         val absCurrentScrollpos =
             makeScrollPositionInRange(_currentSelected!!.toFloat(), _itemCount!!)
         val center = absCurrentScrollpos.roundToInt()
-        //Last Draw = Center Item
-        val drawCount = if (_currentSelected == 0) 2 else 3
+        Timber.i("CENTER")
+        //TODO : Figure out how to make it so that first and last are 2
+        val drawCount = if (center == 0) 3 else 3
+        //First Draw Position, Default to 0
         val firstDraw = max(center - drawCount, 0)
+        //Last Draw Position, Default to Max - 1
         val lastDraw = min(center + drawCount, drawCount - 1)
+        //Calculate the Nmber of layouts
         val layout = lastDraw - firstDraw + 1
-        Timber.i(" Last Draw${lastDraw}")
-        Timber.i("Layou Count ${layout}")
+
+        //Organizes the views into the Helper
         for (i in firstDraw..lastDraw) {
-            if (i == center) {
-                Timber.i("Center here")
-                helper.addOrderItem(layout - 1, i, 0F)
-            } else if (i < center) {
-                helper.addOrderItem(i - firstDraw, i, i - absCurrentScrollpos)
-            } else {
-                helper.addOrderItem(layout - (i - center), i, i - absCurrentScrollpos)
+            when {
+                center > i -> {
+                    helper.addOrderItem(i - firstDraw, i, i - absCurrentScrollpos)
+                }
+                i == center -> {
+                    helper.addOrderItem(layout - 1, i, i - absCurrentScrollpos)
+                }
+                else -> {
+                    helper.addOrderItem(layout - (i - center) - 1, i, i - absCurrentScrollpos)
+                }
             }
         }
     }
 
+    /**
+     * Scrolls Offset from the nearest item to center
+     */
+    private fun getOffsetFromCenterView(): Int {
+        return (getCurrentScrollPosition() * getScrollItemSize() - helper._scrollOffset).roundToInt()
+    }
+
+    private fun getOffsetForView(view: View): Int {
+        val targetPosition = getPosition(view)
+        val distance = getScrollDirection(targetPosition)
+        return (distance * getScrollItemSize()).roundToInt()
+    }
+
     private fun getOffsetByPosition(itemPosition: Float): Int {
+        Timber.i("GetOffset by Position ${itemPosition}")
         val smoothPosition = convertItemPositionDiffToSmoothPositionDiff(itemPosition)
+        Timber.i("Smooth Position ${smoothPosition}")
 
         val diff = (width - paddingStart - paddingEnd) - _itemSizeWidth!! / 2
         return (sign(itemPosition) * diff * smoothPosition).roundToInt()
@@ -274,17 +326,14 @@ class SingleLayoutManager : RecyclerView.LayoutManager() {
     }
 
     private fun detectSelectedChanged(currentScrollPos: Float, state: RecyclerView.State) {
+        Timber.i("Selected Changed")
         val absScrollPosition = makeScrollPositionInRange(currentScrollPos, state.itemCount)
         val centerItem = absScrollPosition.roundToInt()
+        Timber.i("Center Item ${centerItem} ${absScrollPosition}")
         if (_currentSelected != centerItem) {
+            Timber.i("Not equal to Center ${centerItem} ${_currentSelected}")
             _currentSelected = centerItem
         }
-    }
-
-    private fun calculateOffset(view: View): Int {
-        val target = getPosition(view)
-        val distance = getScrollDirection(target)
-        return (distance * getScrollItemSize()).roundToInt()
     }
 
     private fun getScrollDirection(targetPos: Int): Float {
@@ -296,12 +345,11 @@ class SingleLayoutManager : RecyclerView.LayoutManager() {
         val fullScrollSize: Int = getMaxScrollOffset()
         return if (0 == fullScrollSize) {
             0f
-        } else 1.0f / getScrollItemSize()
+        } else 1.0f * helper._scrollOffset / getScrollItemSize()
     }
 
-    private fun getMaxScrollOffset(): Int {
-        Timber.i("Item count ${_itemCount}")
 
+    private fun getMaxScrollOffset(): Int {
         return if (_itemCount == null) {
             getScrollItemSize() * -1
         } else {
@@ -324,18 +372,32 @@ class SingleLayoutManager : RecyclerView.LayoutManager() {
             if (order.size <= pos) {
                 order.add(LayoutOrder(adapterPos, itemDiff))
             } else {
-                order.set(pos, LayoutOrder(adapterPos, itemDiff))
+                order[pos] = LayoutOrder(adapterPos, itemDiff)
             }
-            Timber.i("SIZE ${order.size}")
         }
 
         fun getOrder() = order
+    }
+
+    inner class PostLayoutListener {
+        private val scaleMultiple = 0.17f
+        fun scaleChild(
+            view: View,
+            differenceToCenter: Float,
+            adapterPosition: Int
+        ): ItemTransform {
+            Timber.i("VIEW _${differenceToCenter}")
+            val scale = 1.0f - scaleMultiple * abs(differenceToCenter).roundToInt()
+            val translateX = view.measuredWidth * (1 - scale) / 2f
+            return ItemTransform(scale, scale, translateX)
+        }
     }
 
     companion object {
         private const val HORIZONTAL = OrientationHelper.HORIZONTAL
 
         data class LayoutOrder(val adapterPos: Int, val itemPositionDiff: Float)
+        data class ItemTransform(val scaleX: Float, val scaleY: Float, val translateX: Float)
 
         private fun makeScrollPositionInRange(currentScrollPos: Float, count: Int): Float {
             var absoluteCurrent = currentScrollPos
@@ -345,7 +407,6 @@ class SingleLayoutManager : RecyclerView.LayoutManager() {
             while (absoluteCurrent.roundToInt() >= count) {
                 absoluteCurrent -= count
             }
-            Timber.i("Absolute Current ${absoluteCurrent}")
             return absoluteCurrent
         }
     }
