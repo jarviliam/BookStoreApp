@@ -1,7 +1,10 @@
 package com.example.googlebooksapi.UI.home.adapters
 
+import android.animation.ValueAnimator
+import android.graphics.PointF
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.LinearInterpolator
 import androidx.core.view.ViewCompat
 import androidx.recyclerview.widget.LinearSmoothScroller
 import androidx.recyclerview.widget.OrientationHelper
@@ -10,12 +13,17 @@ import kotlinx.coroutines.currentCoroutineContext
 import timber.log.Timber
 import kotlin.math.*
 
-class SingleLayoutManager : RecyclerView.LayoutManager() {
+class SingleLayoutManager : RecyclerView.LayoutManager(),
+    RecyclerView.SmoothScroller.ScrollVectorProvider {
     private var _pendingScrollPosition: Int? = null
     private var _itemSizeWidth: Int? = null
     private var _itemCount: Int? = null
     private var _itemSizeHeight: Int? = null
     private var _currentSelected: Int? = 1
+    private val _autoMinAnim = 100
+    private var _SelectedAnimator: ValueAnimator? = null
+    private val _autoMaxAnim = 300
+    private var _isAutoSelected: Boolean = true
     private val helper = LayoutHelper()
     private val postHelper = PostLayoutListener()
 
@@ -46,9 +54,57 @@ class SingleLayoutManager : RecyclerView.LayoutManager() {
         if (position < 0) {
             throw IllegalArgumentException("DANG BRO")
         }
-        Timber.i("Position ${position}")
         _pendingScrollPosition = position
         requestLayout()
+    }
+
+    /*
+    override fun onScrollStateChanged(state: Int) {
+        super.onScrollStateChanged(state)
+        Timber.i("------------")
+        Timber.i("SCROLL STATE ${state}")
+        when (state) {
+            RecyclerView.SCROLL_STATE_DRAGGING -> {
+                //Cancel Animation
+                //cancelAnimator()
+            }
+            RecyclerView.SCROLL_STATE_IDLE -> {
+                if (_isAutoSelected) {
+                    //testScrollAnimate()
+                }
+            }
+        }
+    }*/
+
+    private fun testScrollAnimate() {
+        cancelAnimator()
+        val x = getOffsetFromCenterView()
+        val distance = getOffsetByPosition(getCurrentScrollPosition())
+        //val duration =
+        _SelectedAnimator = ValueAnimator.ofInt(0, distance)
+        _SelectedAnimator?.setDuration(300)
+        _SelectedAnimator?.setInterpolator(LinearInterpolator())
+        val startedOffset = helper._scrollOffset
+        Timber.tag("Animator")
+        Timber.i("----------------------")
+        Timber.i("Current Selected ${_currentSelected}")
+        Timber.i("Offset From Center: ${x}")
+        Timber.i("Distance From Center: ${distance}")
+        Timber.i("Started Offset: ${startedOffset}")
+        _SelectedAnimator?.addUpdateListener {
+            Timber.tag("Animation")
+            Timber.i("Scroll Offset ${helper._scrollOffset}")
+            Timber.i("Value ${it.animatedValue}")
+            //helper._scrollOffset = (startedOffset + (it.animatedValue as Int))
+            //requestLayout()
+        }
+        _SelectedAnimator?.start()
+    }
+
+    private fun cancelAnimator() {
+        if (_SelectedAnimator != null && (_SelectedAnimator!!.isStarted || _SelectedAnimator!!.isRunning)) {
+            _SelectedAnimator?.cancel()
+        }
     }
 
     override fun smoothScrollToPosition(
@@ -85,16 +141,11 @@ class SingleLayoutManager : RecyclerView.LayoutManager() {
         if (_itemSizeWidth == null) return 0
         if (childCount == 0 || diff == 0) return 0
         val maxOffset = getMaxScrollOffset()
-        Timber.i("Max Offset ${maxOffset}")
-        Timber.i("Diff${diff}")
         val scrolLAmount = if (0 > helper._scrollOffset + diff) {
-            Timber.i("RESTTTO 0")
             -helper._scrollOffset
         } else if (helper._scrollOffset + diff > maxOffset) {
-            Timber.i("MAKE MAX OFFSET")
             maxOffset - helper._scrollOffset
         } else {
-            Timber.i("Man Just the Diff?")
             diff
         }
         if (scrolLAmount != 0) {
@@ -141,11 +192,10 @@ class SingleLayoutManager : RecyclerView.LayoutManager() {
 
         }
         if (_pendingScrollPosition != null) {
-            Timber.i("Pending Scroll Pos is Not NUll")
             helper._scrollOffset = calculateScrollForSelected(_pendingScrollPosition!!, state)
+            _pendingScrollPosition = null
         }
         if (state.didStructureChange() && _currentSelected != null) {
-            Timber.i("Current Not null. Structure Change")
             helper._scrollOffset = calculateScrollForSelected(_currentSelected!!, state)
         }
 
@@ -154,10 +204,11 @@ class SingleLayoutManager : RecyclerView.LayoutManager() {
 
     private fun fillData(recycler: RecyclerView.Recycler, state: RecyclerView.State) {
         makeLayoutOrder(state)
-        val currentScrollPos = getCurrentScrollPosition()
-        Timber.i("Current Scroll Pos${currentScrollPos}")
         detachAndScrapAttachedViews(recycler)
+
+        //Get Width of recycler
         val width = width - paddingStart - paddingEnd
+        //Get Height
         val height = height - paddingTop - paddingBottom
 
         val top = (height - _itemSizeHeight!!) / 2
@@ -166,22 +217,15 @@ class SingleLayoutManager : RecyclerView.LayoutManager() {
         val center = (width - _itemSizeWidth!!) / 2
         //for (i in 2 downTo 0) {
         helper.getOrder().forEachIndexed { i, layoutOrder ->
-            val offCenterPos = i - _currentSelected!!
             val offset = getOffsetByPosition(layoutOrder.itemPositionDiff)
             val start = center + offset
             val end = start + _itemSizeWidth!!
-            Timber.i("View ${i} - ${offset} ${start} ${end}")
+            //Timber.i("View ${i} - ${offset} ${start} ${end}")
             fillView(layoutOrder, recycler, start, top, end, bottom)
         }
-
-        val absScrolLpos = makeScrollPositionInRange(currentScrollPos, state.itemCount)
-        val centerItem = absScrolLpos.roundToInt()
-
-        Timber.i("Center Pos ${centerItem}")
-
         recycler.clear()
-        detectSelectedChanged(currentScrollPos, state)
-
+        //Update Selected Change if it has changed
+        detectSelectedChanged(getCurrentScrollPosition(), state)
     }
 
     /**
@@ -204,8 +248,8 @@ class SingleLayoutManager : RecyclerView.LayoutManager() {
         ViewCompat.setElevation(view, elevation)
         //Get Scaling Factors
         val transformation = postHelper.scaleChild(view, order.itemPositionDiff, order.adapterPos)
-        Timber.tag("Fill View")
-        Timber.i("View ${order.adapterPos} - ${transformation.translateX} ${transformation.scaleX}")
+        //Timber.tag("Fill View")
+        //Timber.i("View ${order.adapterPos} - ${transformation.translateX} ${transformation.scaleX}")
         //If The view is To the left of the Center. Subtract the Translation.
         //to move it left
         if (order.itemPositionDiff.roundToInt() < 0) {
@@ -268,21 +312,19 @@ class SingleLayoutManager : RecyclerView.LayoutManager() {
     /**
      * Scrolls Offset from the nearest item to center
      */
-    private fun getOffsetFromCenterView(): Int {
+    fun getOffsetFromCenterView(): Int {
         return (getCurrentScrollPosition() * getScrollItemSize() - helper._scrollOffset).roundToInt()
     }
 
     private fun getOffsetForView(view: View): Int {
+        Timber.i("Offset for View")
         val targetPosition = getPosition(view)
         val distance = getScrollDirection(targetPosition)
         return (distance * getScrollItemSize()).roundToInt()
     }
 
     private fun getOffsetByPosition(itemPosition: Float): Int {
-        Timber.i("GetOffset by Position ${itemPosition}")
         val smoothPosition = convertItemPositionDiffToSmoothPositionDiff(itemPosition)
-        Timber.i("Smooth Position ${smoothPosition}")
-
         val diff = (width - paddingStart - paddingEnd) - _itemSizeWidth!! / 2
         return (sign(itemPosition) * diff * smoothPosition).roundToInt()
     }
@@ -329,9 +371,8 @@ class SingleLayoutManager : RecyclerView.LayoutManager() {
         Timber.i("Selected Changed")
         val absScrollPosition = makeScrollPositionInRange(currentScrollPos, state.itemCount)
         val centerItem = absScrollPosition.roundToInt()
-        Timber.i("Center Item ${centerItem} ${absScrollPosition}")
         if (_currentSelected != centerItem) {
-            Timber.i("Not equal to Center ${centerItem} ${_currentSelected}")
+            Timber.i("ReCentering to -> ${centerItem}")
             _currentSelected = centerItem
         }
     }
@@ -399,6 +440,17 @@ class SingleLayoutManager : RecyclerView.LayoutManager() {
         data class LayoutOrder(val adapterPos: Int, val itemPositionDiff: Float)
         data class ItemTransform(val scaleX: Float, val scaleY: Float, val translateX: Float)
 
+        private fun calculateCenterViewPosition(currentScrollPos: Float, count: Int): Int {
+            var absoluteCurrent = currentScrollPos
+            while (0 > absoluteCurrent) {
+                absoluteCurrent += count
+            }
+            while (absoluteCurrent.roundToInt() >= count) {
+                absoluteCurrent -= count
+            }
+            return absoluteCurrent.roundToInt()
+        }
+
         private fun makeScrollPositionInRange(currentScrollPos: Float, count: Int): Float {
             var absoluteCurrent = currentScrollPos
             while (0 > absoluteCurrent) {
@@ -409,5 +461,12 @@ class SingleLayoutManager : RecyclerView.LayoutManager() {
             }
             return absoluteCurrent
         }
+    }
+
+    override fun computeScrollVectorForPosition(targetPosition: Int): PointF? {
+        if (childCount == 0) return null
+        val directionDistance = getScrollDirection(targetPosition)
+        val direction = -sign(directionDistance)
+        return PointF(direction, 0F)
     }
 }

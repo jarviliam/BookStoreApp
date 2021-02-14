@@ -6,8 +6,8 @@ import androidx.annotation.IdRes
 import androidx.annotation.LayoutRes
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
-import com.example.googlebooksapi.ext.showErrorSnackbar
-import com.example.googlebooksapi.ext.showInfoSnackbar
+import com.example.googlebooksapi.extensions.showErrorSnackbar
+import com.example.googlebooksapi.extensions.showInfoSnackbar
 
 abstract class BaseFragment(@LayoutRes contentLayoutId: Int) : Fragment(contentLayoutId) {
 

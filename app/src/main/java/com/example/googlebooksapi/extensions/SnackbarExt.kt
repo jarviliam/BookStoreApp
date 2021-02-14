@@ -1,4 +1,4 @@
-package com.example.googlebooksapi.ext
+package com.example.googlebooksapi.extensions
 
 import android.graphics.Color
 import android.view.ViewGroup

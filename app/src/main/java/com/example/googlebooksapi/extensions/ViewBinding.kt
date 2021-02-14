@@ -1,4 +1,4 @@
-package com.example.googlebooksapi.ext
+package com.example.googlebooksapi.extensions
 
 import android.view.View
 import androidx.fragment.app.Fragment

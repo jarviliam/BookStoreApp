@@ -7,6 +7,7 @@ import androidx.fragment.app.viewModels
 import android.view.View
 import android.widget.ImageView
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.googlebooksapi.R
 import com.example.googlebooksapi.UI.base.BaseFragment
 import com.example.googlebooksapi.UI.home.adapters.AudioBooksAdapter
@@ -15,8 +16,9 @@ import com.example.googlebooksapi.UI.home.adapters.SingleLayoutManager
 import com.example.googlebooksapi.aou.ItemObj
 import com.example.googlebooksapi.aou.Temp
 import com.example.googlebooksapi.databinding.HomeFragmentBinding
-import com.example.googlebooksapi.ext.viewBinding
+import com.example.googlebooksapi.extensions.viewBinding
 import dagger.hilt.android.AndroidEntryPoint
+import timber.log.Timber
 
 @AndroidEntryPoint
 class HomeFragment : BaseFragment(R.layout.home_fragment) {
@@ -66,8 +68,20 @@ class HomeFragment : BaseFragment(R.layout.home_fragment) {
         adapter?.updateList(li)
         binding.homeBooksRV.apply {
             layoutManager = SingleLayoutManager()
+            setHasFixedSize(true)
             //LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
             adapter = this@HomeFragment.adapter
+            addOnScrollListener(object: RecyclerView.OnScrollListener() {
+                override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+                    super.onScrollStateChanged(recyclerView, newState)
+                    val manager = recyclerView.layoutManager as SingleLayoutManager
+                    if(RecyclerView.SCROLL_STATE_IDLE == newState){
+                        Timber.i("HERE")
+                        recyclerView.smoothScrollBy(manager.getOffsetFromCenterView(),0)
+                    }
+                }
+
+            })
         }
         binding.audioBooksRV.apply {
             layoutManager =

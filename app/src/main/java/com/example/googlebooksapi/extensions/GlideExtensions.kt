@@ -1,4 +1,4 @@
-package com.example.googlebooksapi.ext
+package com.example.googlebooksapi.extensions
 
 import android.graphics.drawable.Drawable
 import com.bumptech.glide.RequestBuilder

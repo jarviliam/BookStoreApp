@@ -1,4 +1,4 @@
-package com.example.googlebooksapi.ext
+package com.example.googlebooksapi.extensions
 
 import com.example.googlebooksapi.aou.ItemObj
 import com.example.googlebooksapi.database.BookEntity

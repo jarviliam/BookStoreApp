@@ -1,4 +1,4 @@
-package com.example.googlebooksapi.ext
+package com.example.googlebooksapi.extensions
 
 import android.animation.AnimatorSet
 import android.animation.ObjectAnimator
