@@ -64,14 +64,15 @@ class HomeFragment : BaseFragment(R.layout.home_fragment) {
             handleAdapterClick(itemObj, imageView)
         }
         audioAdapter = AudioBooksAdapter()
-        val li = listOf(Temp(Color.RED), Temp(Color.BLUE), Temp(Color.YELLOW), Temp(Color.GREEN))
+        val li = listOf(Temp(Color.RED), Temp(Color.BLUE), Temp(Color.YELLOW))
+
         adapter?.updateList(li)
         binding.homeBooksRV.apply {
             layoutManager = SingleLayoutManager()
             setHasFixedSize(true)
             //LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
             adapter = this@HomeFragment.adapter
-            addOnScrollListener(object: RecyclerView.OnScrollListener() {
+            /*addOnScrollListener(object: RecyclerView.OnScrollListener() {
                 override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
                     super.onScrollStateChanged(recyclerView, newState)
                     val manager = recyclerView.layoutManager as SingleLayoutManager
@@ -81,7 +82,7 @@ class HomeFragment : BaseFragment(R.layout.home_fragment) {
                     }
                 }
 
-            })
+            })*/
         }
         binding.audioBooksRV.apply {
             layoutManager =

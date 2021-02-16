@@ -19,7 +19,7 @@ class SingleLayoutManager : RecyclerView.LayoutManager(),
     private var _itemSizeWidth: Int? = null
     private var _itemCount: Int? = null
     private var _itemSizeHeight: Int? = null
-    private var _currentSelected: Int? = 1
+    private var _currentSelected: Int? = 0
     private val _autoMinAnim = 100
     private var _SelectedAnimator: ValueAnimator? = null
     private val _autoMaxAnim = 300
@@ -58,7 +58,7 @@ class SingleLayoutManager : RecyclerView.LayoutManager(),
         requestLayout()
     }
 
-    /*
+
     override fun onScrollStateChanged(state: Int) {
         super.onScrollStateChanged(state)
         Timber.i("------------")
@@ -66,15 +66,22 @@ class SingleLayoutManager : RecyclerView.LayoutManager(),
         when (state) {
             RecyclerView.SCROLL_STATE_DRAGGING -> {
                 //Cancel Animation
-                //cancelAnimator()
+                cancelAnimator()
             }
             RecyclerView.SCROLL_STATE_IDLE -> {
                 if (_isAutoSelected) {
-                    //testScrollAnimate()
+                    testScrollAnimate()
                 }
             }
         }
-    }*/
+    }
+
+    private fun shouldFindSelectPosition() {
+        val remainder = (abs(helper._scrollOffset) % getMaxScrollOffset()).toInt()
+        if (remainder >= getMaxScrollOffset() / 2.0f) {
+
+        }
+    }
 
     private fun testScrollAnimate() {
         cancelAnimator()
@@ -95,8 +102,11 @@ class SingleLayoutManager : RecyclerView.LayoutManager(),
             Timber.tag("Animation")
             Timber.i("Scroll Offset ${helper._scrollOffset}")
             Timber.i("Value ${it.animatedValue}")
-            //helper._scrollOffset = (startedOffset + (it.animatedValue as Int))
-            //requestLayout()
+            if (helper._scrollOffset < 0) {
+            } else {
+                helper._scrollOffset += (startedOffset + (it.animatedValue as Int))
+            }
+            requestLayout()
         }
         _SelectedAnimator?.start()
     }
@@ -150,6 +160,7 @@ class SingleLayoutManager : RecyclerView.LayoutManager(),
         }
         if (scrolLAmount != 0) {
             helper._scrollOffset += scrolLAmount
+            Timber.i("Scroll By")
             fillData(recycler, state)
         }
         return scrolLAmount
@@ -160,6 +171,8 @@ class SingleLayoutManager : RecyclerView.LayoutManager(),
             removeAndRecycleAllViews(recycler)
             return
         }
+        Timber.i("Width ${width - paddingEnd - paddingStart}")
+        Timber.i("Width ${_itemSizeWidth}")
         detachAndScrapAttachedViews(recycler)
         if (_itemSizeWidth == null) {
             val list = recycler.scrapList
@@ -191,12 +204,13 @@ class SingleLayoutManager : RecyclerView.LayoutManager(),
             _itemSizeHeight = height
 
         }
+        Timber.i("Layout Children")
         if (_pendingScrollPosition != null) {
-            helper._scrollOffset = calculateScrollForSelected(_pendingScrollPosition!!, state)
+            //helper._scrollOffset = calculateScrollForSelected(_pendingScrollPosition!!, state)
             _pendingScrollPosition = null
         }
         if (state.didStructureChange() && _currentSelected != null) {
-            helper._scrollOffset = calculateScrollForSelected(_currentSelected!!, state)
+            //helper._scrollOffset = calculateScrollForSelected(_currentSelected!!, state)
         }
 
         fillData(recycler, state)
@@ -206,6 +220,10 @@ class SingleLayoutManager : RecyclerView.LayoutManager(),
         makeLayoutOrder(state)
         detachAndScrapAttachedViews(recycler)
 
+        val fraction =
+            (abs(helper._scrollOffset) % getMaxScrollOffset()) / (getMaxScrollOffset() * 1.0F)
+        Timber.i("Fraction ${fraction}")
+        //val firstView = floor((abs(helper._scrollOffset) / getMaxScrollOffset()).toDouble()).roundToInt()
         //Get Width of recycler
         val width = width - paddingStart - paddingEnd
         //Get Height
@@ -213,19 +231,18 @@ class SingleLayoutManager : RecyclerView.LayoutManager(),
 
         val top = (height - _itemSizeHeight!!) / 2
         val bottom = top + _itemSizeHeight!!
-
         val center = (width - _itemSizeWidth!!) / 2
-        //for (i in 2 downTo 0) {
+        detectSelectedChanged(getCurrentScrollPosition(), state)
         helper.getOrder().forEachIndexed { i, layoutOrder ->
-            val offset = getOffsetByPosition(layoutOrder.itemPositionDiff)
+            val offset = getOffsetByPosition(layoutOrder.itemPositionDiff) - helper._scrollOffset
+            Timber.i("Offset ${i} ${offset} ${center} ${layoutOrder.adapterPos}")
             val start = center + offset
             val end = start + _itemSizeWidth!!
-            //Timber.i("View ${i} - ${offset} ${start} ${end}")
+            Timber.i("View ${i} - ${offset} ${start} ${end}")
             fillView(layoutOrder, recycler, start, top, end, bottom)
         }
         recycler.clear()
         //Update Selected Change if it has changed
-        detectSelectedChanged(getCurrentScrollPosition(), state)
     }
 
     /**
@@ -282,16 +299,18 @@ class SingleLayoutManager : RecyclerView.LayoutManager(),
         _itemCount = state.itemCount
         val absCurrentScrollpos =
             makeScrollPositionInRange(_currentSelected!!.toFloat(), _itemCount!!)
+        Timber.i("Abs Current ${absCurrentScrollpos}")
         val center = absCurrentScrollpos.roundToInt()
-        Timber.i("CENTER")
         //TODO : Figure out how to make it so that first and last are 2
         val drawCount = if (center == 0) 3 else 3
         //First Draw Position, Default to 0
         val firstDraw = max(center - drawCount, 0)
         //Last Draw Position, Default to Max - 1
-        val lastDraw = min(center + drawCount, drawCount - 1)
+        val lastDraw = min(center + drawCount, itemCount - 1)
         //Calculate the Nmber of layouts
         val layout = lastDraw - firstDraw + 1
+        Timber.i("Layout Count ${layout}")
+        Timber.i("Center ${center}")
 
         //Organizes the views into the Helper
         for (i in firstDraw..lastDraw) {
@@ -304,9 +323,14 @@ class SingleLayoutManager : RecyclerView.LayoutManager(),
                 }
                 else -> {
                     helper.addOrderItem(layout - (i - center) - 1, i, i - absCurrentScrollpos)
+
                 }
             }
         }
+    }
+
+    fun getSelectedItemPosition() {
+
     }
 
     /**
@@ -325,6 +349,7 @@ class SingleLayoutManager : RecyclerView.LayoutManager(),
 
     private fun getOffsetByPosition(itemPosition: Float): Int {
         val smoothPosition = convertItemPositionDiffToSmoothPositionDiff(itemPosition)
+        Timber.i("Smoothing ${itemPosition} ${smoothPosition}")
         val diff = (width - paddingStart - paddingEnd) - _itemSizeWidth!! / 2
         return (sign(itemPosition) * diff * smoothPosition).roundToInt()
     }
@@ -341,26 +366,20 @@ class SingleLayoutManager : RecyclerView.LayoutManager(),
     private fun convertItemPositionDiffToSmoothPositionDiff(itemPositionDiff: Float): Double {
         //Obtain Absolute Value
         val absIemPositionDiff = abs(itemPositionDiff)
-        //val absIemPositionDiff = abs(itemPositionDiff - _currentSelected!!)
-        Timber.i("Abs Item Diff ${absIemPositionDiff}")
-        val drawCount = if (_currentSelected == 0) 2 else 3
+        val drawCount = 3
 
         // we detect if this item is close for center or not. We use (1 / maxVisibleItem) ^ (1/3) as close definer.
         return if (absIemPositionDiff > StrictMath.pow(
                 (1.0f / drawCount).toDouble(),
-                (1.0f / drawCount).toDouble()
+                (1.0f / 3.0)
             )
         ) {
-            Timber.i("This Equation")
-
-            //2.0
             // this item is far from center line, so we should make it move like square root function
             StrictMath.pow(
                 absIemPositionDiff / drawCount.toDouble(),
                 (1 / 2.0f).toDouble()
             )
         } else {
-            Timber.i("That equation")
             //5.0
             //0.0
             StrictMath.pow(absIemPositionDiff.toDouble(), 2.0)
@@ -373,7 +392,7 @@ class SingleLayoutManager : RecyclerView.LayoutManager(),
         val centerItem = absScrollPosition.roundToInt()
         if (_currentSelected != centerItem) {
             Timber.i("ReCentering to -> ${centerItem}")
-            _currentSelected = centerItem
+            //_currentSelected = centerItem
         }
     }
 
@@ -427,7 +446,6 @@ class SingleLayoutManager : RecyclerView.LayoutManager(),
             differenceToCenter: Float,
             adapterPosition: Int
         ): ItemTransform {
-            Timber.i("VIEW _${differenceToCenter}")
             val scale = 1.0f - scaleMultiple * abs(differenceToCenter).roundToInt()
             val translateX = view.measuredWidth * (1 - scale) / 2f
             return ItemTransform(scale, scale, translateX)
