@@ -1,9 +1,9 @@
 object PluginVersion {
     const val KOTLIN_VERSION = "1.4.30"
-    const val GRADLE_VERSION = "4.2.0-beta03"
+    const val GRADLE_VERSION = "4.2.0-beta04"
 
     const val NAV_SAFE_ARGS_VERSION = "2.3.2"
-    const val HILT_VERSION = "2.31.1-alpha"
+    const val HILT_VERSION = "2.33-beta"
 }
 
 object AndroidVersion {

@@ -34,6 +34,8 @@ class HomeFragment : BaseFragment(R.layout.home_fragment) {
         makeAdapters()
         setupUI()
         setupObs()
+
+        binding.taby
     }
 
     private fun setupUI() {
